@@ -1,128 +1,131 @@
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogIn, UserPlus, Mail, Lock, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Shield, Users, Trophy } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AuthSection = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Si ya está autenticado, mostrar sección de bienvenida
+  if (user) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-background">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              ¡Bienvenido al Tour VR!
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Tu cuenta está lista. Explora, interactúa y gana puntos en nuestro recorrido virtual gamificado.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card className="border-primary/20">
+              <CardContent className="p-6 text-center">
+                <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">Cuenta Verificada</h3>
+                <p className="text-sm text-muted-foreground">
+                  Tu perfil está activo y listo para el tour
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-accent/20">
+              <CardContent className="p-6 text-center">
+                <Users className="h-12 w-12 text-accent mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">Comunidad</h3>
+                <p className="text-sm text-muted-foreground">
+                  Compite con otros usuarios en el ranking
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-secondary/20">
+              <CardContent className="p-6 text-center">
+                <Trophy className="h-12 w-12 text-secondary mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">Gamificación</h3>
+                <p className="text-sm text-muted-foreground">
+                  Gana puntos por cada interacción completada
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Button 
+            size="lg" 
+            variant="vr" 
+            className="text-lg px-8"
+            onClick={() => {
+              // TODO: Navegar al tour cuando esté implementado
+              console.log('Iniciar tour VR');
+            }}
+          >
+            Comenzar Tour VR
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
+  // Si no está autenticado, mostrar call-to-action
   return (
-    <section className="py-20 px-6">
-      <div className="container mx-auto max-w-md">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold gradient-text mb-4">
-            Únete a la Aventura
+    <section className="py-20 px-4 bg-muted/30">
+      <div className="max-w-4xl mx-auto text-center">
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold mb-4">
+            Únete a la Experiencia
           </h2>
-          <p className="text-muted-foreground">
-            Crea tu cuenta para comenzar a explorar y competir
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Crea tu cuenta para desbloquear el tour completo, ganar puntos y competir en el ranking global.
           </p>
         </div>
 
-        <Card className="neon-border bg-card/80 backdrop-blur-sm">
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-              <TabsTrigger value="register">Registrarse</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="login">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <LogIn className="w-5 h-5" />
-                  Iniciar Sesión
-                </CardTitle>
-                <CardDescription>
-                  Accede a tu cuenta para continuar tu progreso
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      placeholder="tu@email.com"
-                      type="email"
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="password"
-                      type="password"
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <Button variant="vr" className="w-full">
-                  Iniciar Sesión
-                </Button>
-              </CardContent>
-            </TabsContent>
-            
-            <TabsContent value="register">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UserPlus className="w-5 h-5" />
-                  Crear Cuenta
-                </CardTitle>
-                <CardDescription>
-                  Registrate para comenzar a explorar
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Nombre de Usuario</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="username"
-                      placeholder="tu_usuario"
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="register-email"
-                      placeholder="tu@email.com"
-                      type="email"
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-password">Contraseña</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="register-password"
-                      type="password"
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <Button variant="game" className="w-full">
-                  Crear Cuenta
-                </Button>
-              </CardContent>
-            </TabsContent>
-          </Tabs>
-        </Card>
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <Card className="border-primary/20">
+            <CardContent className="p-6 text-center">
+              <Shield className="h-8 w-8 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Acceso Completo</h3>
+              <p className="text-sm text-muted-foreground">
+                Desbloquea todas las funciones del tour
+              </p>
+            </CardContent>
+          </Card>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            ¿Necesitas ayuda? Contáctanos en soporte@vrtour.com
-          </p>
+          <Card className="border-accent/20">
+            <CardContent className="p-6 text-center">
+              <Trophy className="h-8 w-8 text-accent mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Puntos y Rankings</h3>
+              <p className="text-sm text-muted-foreground">
+                Gana puntos y compite globalmente
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-secondary/20">
+            <CardContent className="p-6 text-center">
+              <Users className="h-8 w-8 text-secondary mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Comunidad</h3>
+              <p className="text-sm text-muted-foreground">
+                Únete a otros exploradores VR
+              </p>
+            </CardContent>
+          </Card>
         </div>
+
+        <Button 
+          size="lg" 
+          variant="vr" 
+          className="text-lg px-8"
+          onClick={() => navigate('/auth')}
+        >
+          Crear Cuenta Gratis
+          <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
       </div>
     </section>
   );

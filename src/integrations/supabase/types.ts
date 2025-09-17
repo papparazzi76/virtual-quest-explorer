@@ -14,10 +14,123 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      hotspots: {
+        Row: {
+          contenido: string | null
+          created_at: string | null
+          id: string
+          media: Json | null
+          opciones: Json | null
+          pitch: number
+          puntos: number | null
+          scene: string
+          tipo: string
+          titulo: string
+          yaw: number
+        }
+        Insert: {
+          contenido?: string | null
+          created_at?: string | null
+          id?: string
+          media?: Json | null
+          opciones?: Json | null
+          pitch: number
+          puntos?: number | null
+          scene: string
+          tipo: string
+          titulo: string
+          yaw: number
+        }
+        Update: {
+          contenido?: string | null
+          created_at?: string | null
+          id?: string
+          media?: Json | null
+          opciones?: Json | null
+          pitch?: number
+          puntos?: number | null
+          scene?: string
+          tipo?: string
+          titulo?: string
+          yaw?: number
+        }
+        Relationships: []
+      }
+      scores: {
+        Row: {
+          created_at: string | null
+          hotspot_id: string | null
+          id: string
+          puntos: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          hotspot_id?: string | null
+          id?: string
+          puntos: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          hotspot_id?: string | null
+          id?: string
+          puntos?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scores_hotspot_id_fkey"
+            columns: ["hotspot_id"]
+            isOneToOne: false
+            referencedRelation: "hotspots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          posicion: number | null
+          total_puntos: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
