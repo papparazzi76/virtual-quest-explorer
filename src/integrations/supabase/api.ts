@@ -8,6 +8,14 @@ export type Score = Tables<'scores'>;
 export type LeaderboardEntry = Tables<'leaderboard'>;
 export type UserProfile = Tables<'users'>;
 
+// Tipos para las opciones de hotspots
+export interface HotspotOptions {
+  pregunta?: string;
+  opciones?: string[];
+  correcta?: string;
+  escena_siguiente?: string;
+}
+
 /**
  * Obtiene todos los hotspots de la base de datos.
  */
@@ -97,7 +105,7 @@ export const submitScore = async (userId: string, hotspotId: string, puntos: num
     toast({
       title: "¡Puntuación registrada!",
       description: `Has ganado ${puntos} puntos.`,
-      variant: "success",
+      variant: "default",
     });
     return { error: null };
   }

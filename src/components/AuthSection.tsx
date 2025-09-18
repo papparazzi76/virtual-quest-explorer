@@ -59,10 +59,7 @@ const AuthSection = () => {
             size="lg" 
             variant="vr" 
             className="text-lg px-8"
-            onClick={() => {
-              // TODO: Navegar al tour cuando esté implementado
-              console.log('Iniciar tour VR');
-            }}
+            onClick={() => navigate('/tour')}
           >
             Comenzar Tour VR
             <ArrowRight className="ml-2 h-5 w-5" />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
-import { getHotspots, submitScore, Hotspot } from '../integrations/supabase/api';
+import { getHotspots, submitScore, Hotspot, HotspotOptions } from '../integrations/supabase/api';
 import Navbar from '../components/Navbar';
 import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../components/ui/dialog';
@@ -67,7 +67,7 @@ const Tour = () => {
 
   useEffect(() => {
     if (hotspots && !viewer) {
-      setViewer(window.pannellum.viewer('vr-tour-container', tourConfig));
+      setViewer(window.pannellum.viewer('vr-tour-container', tourConfig as any));
     }
     if (viewer) {
       viewer.loadScene(currentScene);
@@ -84,7 +84,8 @@ const Tour = () => {
   const handleQuizSubmit = async () => {
     if (!selectedHotspot || !quizAnswer || !userId) return;
 
-    const correct = selectedHotspot.opciones?.correcta === quizAnswer;
+    const opciones = selectedHotspot.opciones as HotspotOptions;
+    const correct = opciones?.correcta === quizAnswer;
     setQuizResult(correct ? 'success' : 'failure');
 
     if (correct && selectedHotspot.puntos) {
@@ -140,9 +141,9 @@ const Tour = () => {
               {selectedHotspot?.tipo === 'quiz' && (
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Pregunta:</h3>
-                  <p>{selectedHotspot.opciones?.pregunta}</p>
+                  <p>{(selectedHotspot.opciones as HotspotOptions)?.pregunta}</p>
                   <div className="mt-4 space-y-2">
-                    {selectedHotspot.opciones?.opciones.map((opcion) => (
+                    {(selectedHotspot.opciones as HotspotOptions)?.opciones?.map((opcion) => (
                       <Button
                         key={opcion}
                         variant={quizAnswer === opcion ? (quizResult === 'success' ? 'default' : 'destructive') : 'outline'}
@@ -181,12 +182,13 @@ const Tour = () => {
             )}
             <div className="flex justify-between mt-4">
               <Button onClick={() => setIsHotspotModalOpen(false)}>Cerrar</Button>
-              {selectedHotspot?.opciones?.escena_siguiente && (
+              {(selectedHotspot?.opciones as HotspotOptions)?.escena_siguiente && (
                 <Button onClick={() => {
-                  setCurrentScene(selectedHotspot.opciones.escena_siguiente);
+                  const opciones = selectedHotspot.opciones as HotspotOptions;
+                  setCurrentScene(opciones.escena_siguiente!);
                   setIsHotspotModalOpen(false);
                 }}>
-                  Ir a {selectedHotspot.opciones.escena_siguiente}
+                  Ir a {(selectedHotspot.opciones as HotspotOptions)?.escena_siguiente}
                 </Button>
               )}
             </div>
