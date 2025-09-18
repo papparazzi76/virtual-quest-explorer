@@ -10,7 +10,7 @@ const VRHero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(34, 34, 85, 0.7), rgba(34, 34, 85, 0.8)), url(${heroImage})`
+          backgroundImage: `linear-gradient(rgba(55, 66, 74, 0.7), rgba(55, 66, 74, 0.8)), url(${heroImage})`
         }}
       />
       
@@ -34,7 +34,7 @@ const VRHero = () => {
           {/* Main Title */}
           <div className="mb-8 vr-float">
             <Headphones className="w-20 h-20 mx-auto mb-6 text-accent" />
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 gradient-text">
+            <h1 className="text-6xl md:text-8xl font-bold gradient-text">
               VR Tour
             </h1>
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
