@@ -41,8 +41,8 @@ const VRHero = () => {
               Gamificado
             </h2>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Explora espacios virtuales en 360°, interactúa con hotspots, 
-              completa desafíos y compite por el primer lugar en el ranking global.
+              Explora nuestro lugar de trabajo en 360°, interactúa con hotspots, 
+              completa desafíos y compite por el primer lugar en el juego de navidad de 2025.
             </p>
           </div>
 
@@ -72,15 +72,15 @@ const VRHero = () => {
               <Trophy className="w-12 h-12 text-accent mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2 text-foreground">Gamificación</h3>
               <p className="text-muted-foreground">
-                Gana puntos por cada interacción y desbloquea logros únicos
+                Gana puntos por cada interacción completada
               </p>
             </Card>
 
             <Card className="p-6 bg-card/50 backdrop-blur-sm neon-border hover:scale-105 transition-transform duration-300">
               <Users className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2 text-foreground">Competencia Global</h3>
+              <h3 className="text-xl font-bold mb-2 text-foreground">Competencia Local</h3>
               <p className="text-muted-foreground">
-                Compite con usuarios de todo el mundo en el ranking oficial
+                Compite con otros clientes por hacerte con el premio final
               </p>
             </Card>
           </div>
