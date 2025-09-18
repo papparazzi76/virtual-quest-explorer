@@ -18,7 +18,7 @@ const AuthSection = () => {
               ¡Bienvenido al Tour VR!
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Tu cuenta está lista. Explora, interactúa y gana puntos en nuestro recorrido virtual gamificado.
+              Tu cuenta está lista. Explora, interactúa y gana puntos en nuestro recorrido virtual.
             </p>
           </div>
 
@@ -77,7 +77,7 @@ const AuthSection = () => {
             Únete a la Experiencia
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Crea tu cuenta para desbloquear el tour completo, ganar puntos y competir en el ranking global.
+            Crea tu cuenta para desbloquear el tour completo, ganar puntos y competir en el ranking.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ const AuthSection = () => {
               <Trophy className="h-8 w-8 text-accent mx-auto mb-3" />
               <h3 className="font-semibold mb-2">Puntos y Rankings</h3>
               <p className="text-sm text-muted-foreground">
-                Gana puntos y compite globalmente
+                Gana puntos y compite con otros usuarios
               </p>
             </CardContent>
           </Card>
