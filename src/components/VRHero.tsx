@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Trophy, Zap, Users, Headphones } from "lucide-react";
-import heroImage from "@/assets/vr-office-hero.jpg";
+import heroImage from "@/assets/vr-office-hero.png";
 
 const VRHero = () => {
   return (
