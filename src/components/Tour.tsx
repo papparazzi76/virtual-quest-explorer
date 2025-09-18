@@ -44,22 +44,22 @@ const Tour = () => {
     recepcion: {
       title: "Recepción Principal",
       description: "Punto de entrada al edificio corporativo",
-      image: "https://images.unsplash.com/photo-1629904853716-95166b270776?q=80&w=1974&auto=format&fit=crop"
+      image: "https://fvqbzjiwaftlsbbikuin.supabase.co/storage/v1/object/public/scene-images/20250316_170423_829.jpg"
     },
     oficina: {
       title: "Área de Trabajo",
       description: "Espacio colaborativo y moderno",
-      image: "https://images.unsplash.com/photo-1596556534568-d01c0e35220c?q=80&w=2070&auto=format&fit=crop"
+      image: "https://fvqbzjiwaftlsbbikuin.supabase.co/storage/v1/object/public/scene-images/20250316_171037_423.jpg"
     },
     sala_reuniones: {
       title: "Sala de Reuniones",
       description: "Espacio para conferencias y presentaciones",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=1926&auto=format&fit=crop"
+      image: "https://fvqbzjiwaftlsbbikuin.supabase.co/storage/v1/object/public/scene-images/20250316_171119_677.jpg"
     },
     cafeteria: {
-      title: "Cafetería",
+      title: "Exposición cocina",
       description: "Área de descanso y socialización",
-      image: "https://images.unsplash.com/photo-1572126442160-72c7a04a5b3a?q=80&w=1932&auto=format&fit=crop"
+      image: "https://fvqbzjiwaftlsbbikuin.supabase.co/storage/v1/object/public/scene-images/20250316_171434_722.jpg"
     }
   };
 
