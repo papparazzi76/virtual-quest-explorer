@@ -35,10 +35,10 @@ const VRHero = () => {
           <div className="mb-8 vr-float">
             <Headphones className="w-20 h-20 mx-auto mb-6 text-accent" />
             <h1 className="text-6xl md:text-8xl font-bold gradient-text">
-              VR Tour
+              Arca Grupo Carrranza
             </h1>
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-foreground">
-              Gamificado
+              Tour VR
             </h2>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Explora nuestro lugar de trabajo en 360°, interactúa con hotspots, 
