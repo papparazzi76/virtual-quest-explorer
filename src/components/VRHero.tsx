@@ -64,7 +64,7 @@ const VRHero = () => {
               <Zap className="w-12 h-12 text-primary mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2 text-foreground">Recorrido 360°</h3>
               <p className="text-muted-foreground">
-                Navega por espacios virtuales inmersivos con hotspots interactivos
+                Navega por espacios virtuales inmersivos con puntos de interés interactivos
               </p>
             </Card>
 
