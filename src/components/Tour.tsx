@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { Play, Eye, Lightbulb, CheckCircle, XCircle, ChevronLeft, Star, Trophy, MapPin, Users, Settings } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import 'pannellum/build/pannellum.css';
 import 'pannellum/build/pannellum.js';
 
@@ -18,6 +18,7 @@ const Tour = () => {
   const { user } = useAuth();
   const userId = user?.id;
   const navigate = useNavigate();
+  const { tourId } = useParams<{ tourId: string }>();
 
   const [currentScene, setCurrentScene] = useState('recepcion');
   const [isHotspotModalOpen, setIsHotspotModalOpen] = useState(false);
@@ -30,8 +31,9 @@ const Tour = () => {
   const [completedHotspots, setCompletedHotspots] = useState<Set<string>>(new Set());
 
   const { data: hotspots, isLoading, isError } = useQuery<Hotspot[]>({
-    queryKey: ["hotspots"],
-    queryFn: getHotspots,
+    queryKey: ["hotspots", tourId],
+    queryFn: () => getHotspots(tourId),
+    enabled: !!tourId,
   });
 
   const { data: userScores } = useQuery({

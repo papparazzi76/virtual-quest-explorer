@@ -14,7 +14,10 @@ const Navbar = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => navigate('/')}
+          >
             <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center vr-glow">
               <Headphones className="w-6 h-6 text-primary-foreground" />
             </div>
@@ -26,17 +29,21 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Button variant="ghost" className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              className="flex items-center gap-2"
+              onClick={() => navigate('/tours')}
+            >
               <Play className="w-4 h-4" />
-              Recorrido
+              Tours VR
             </Button>
-            <Button variant="ghost" className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              className="flex items-center gap-2"
+              onClick={() => navigate('/ranking')}
+            >
               <Trophy className="w-4 h-4" />
               Ranking
-            </Button>
-            <Button variant="ghost" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Perfil
             </Button>
             {user ? (
               <div className="hidden md:flex items-center gap-3">
@@ -74,17 +81,27 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-border pt-4">
             <div className="flex flex-col gap-2">
-              <Button variant="ghost" className="justify-start">
+              <Button 
+                variant="ghost" 
+                className="justify-start"
+                onClick={() => {
+                  navigate('/tours');
+                  setIsMenuOpen(false);
+                }}
+              >
                 <Play className="w-4 h-4 mr-2" />
-                Recorrido
+                Tours VR
               </Button>
-              <Button variant="ghost" className="justify-start">
+              <Button 
+                variant="ghost" 
+                className="justify-start"
+                onClick={() => {
+                  navigate('/ranking');
+                  setIsMenuOpen(false);
+                }}
+              >
                 <Trophy className="w-4 h-4 mr-2" />
                 Ranking
-              </Button>
-              <Button variant="ghost" className="justify-start">
-                <User className="w-4 h-4 mr-2" />
-                Perfil
               </Button>
               {user ? (
                 <div className="flex flex-col space-y-2 mt-4">

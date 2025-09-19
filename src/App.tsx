@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Tour from "./components/Tour";
+import TourSelection from "./pages/TourSelection";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -22,8 +23,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/tours" element={<TourSelection />} />
             <Route 
-              path="/tour" 
+              path="/tour/:tourId" 
               element={
                 <ProtectedRoute>
                   <Tour />

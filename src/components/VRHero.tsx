@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Trophy, Zap, Users, Headphones } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/vr-office-hero.png";
 
 const VRHero = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
@@ -48,11 +51,21 @@ const VRHero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button variant="hero" size="lg" className="text-lg px-8 py-4">
+            <Button 
+              variant="hero" 
+              size="lg" 
+              className="text-lg px-8 py-4"
+              onClick={() => navigate('/tours')}
+            >
               <Play className="w-5 h-5 mr-2" />
-              Iniciar Recorrido
+              Seleccionar Tour
             </Button>
-            <Button variant="vr" size="lg" className="text-lg px-8 py-4">
+            <Button 
+              variant="vr" 
+              size="lg" 
+              className="text-lg px-8 py-4"
+              onClick={() => navigate('/ranking')}
+            >
               <Trophy className="w-5 h-5 mr-2" />
               Ver Ranking
             </Button>

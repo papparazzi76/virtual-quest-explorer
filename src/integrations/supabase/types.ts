@@ -26,6 +26,7 @@ export type Database = {
           scene: string
           tipo: string
           titulo: string
+          tour_id: string | null
           yaw: number
         }
         Insert: {
@@ -39,6 +40,7 @@ export type Database = {
           scene: string
           tipo: string
           titulo: string
+          tour_id?: string | null
           yaw: number
         }
         Update: {
@@ -52,9 +54,18 @@ export type Database = {
           scene?: string
           tipo?: string
           titulo?: string
+          tour_id?: string | null
           yaw?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "hotspots_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scores: {
         Row: {
@@ -101,6 +112,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tours: {
+        Row: {
+          activo: boolean
+          ciudad: string
+          created_at: string
+          descripcion: string | null
+          id: string
+          imagen_portada: string | null
+          nombre: string
+          updated_at: string
+        }
+        Insert: {
+          activo?: boolean
+          ciudad: string
+          created_at?: string
+          descripcion?: string | null
+          id?: string
+          imagen_portada?: string | null
+          nombre: string
+          updated_at?: string
+        }
+        Update: {
+          activo?: boolean
+          ciudad?: string
+          created_at?: string
+          descripcion?: string | null
+          id?: string
+          imagen_portada?: string | null
+          nombre?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       users: {
         Row: {

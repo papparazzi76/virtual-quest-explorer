@@ -7,6 +7,7 @@ export type Hotspot = Tables<'hotspots'>;
 export type Score = Tables<'scores'>;
 export type LeaderboardEntry = Tables<'leaderboard'>;
 export type UserProfile = Tables<'users'>;
+export type Tour = Tables<'tours'>;
 
 // Tipos para las opciones de hotspots
 export interface HotspotOptions {
@@ -17,10 +18,33 @@ export interface HotspotOptions {
 }
 
 /**
- * Obtiene todos los hotspots de la base de datos.
+ * Obtiene todos los tours disponibles.
  */
-export const getHotspots = async (): Promise<Hotspot[] | null> => {
-  const { data, error } = await supabase.from('hotspots').select('*');
+export const getTours = async (): Promise<Tour[] | null> => {
+  const { data, error } = await supabase.from('tours').select('*').eq('activo', true);
+  if (error) {
+    console.error("Error fetching tours:", error);
+    toast({
+      title: "Error al cargar tours",
+      description: "No se pudieron obtener los datos de los tours.",
+      variant: "destructive",
+    });
+    return null;
+  }
+  return data;
+};
+
+/**
+ * Obtiene todos los hotspots de la base de datos para un tour específico.
+ */
+export const getHotspots = async (tourId?: string): Promise<Hotspot[] | null> => {
+  let query = supabase.from('hotspots').select('*');
+  
+  if (tourId) {
+    query = query.eq('tour_id', tourId);
+  }
+  
+  const { data, error } = await query;
   if (error) {
     console.error("Error fetching hotspots:", error);
     toast({
