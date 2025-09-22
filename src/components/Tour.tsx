@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
-import { getHotspots, submitScore, Hotspot, HotspotOptions, getUserScores } from '../integrations/supabase/api';
+import { getDailyContent, submitDailyProgress, getUserDailyProgress, DailyContent, getUserScores } from '../integrations/supabase/api';
 import Navbar from '../components/Navbar';
 import { Button } from '../components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
-import { Play, Eye, Lightbulb, CheckCircle, XCircle, ChevronLeft, Star, Trophy, MapPin, Users, Settings } from 'lucide-react';
+import { CheckCircle, ChevronLeft, Star, Trophy, MapPin, Settings, Calendar, Eye } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import DailyPOIModal from './DailyPOIModal';
 import 'pannellum/build/pannellum.css';
 import 'pannellum/build/pannellum.js';
 
@@ -21,19 +21,24 @@ const Tour = () => {
   const { tourId } = useParams<{ tourId: string }>();
 
   const [currentScene, setCurrentScene] = useState('recepcion');
-  const [isHotspotModalOpen, setIsHotspotModalOpen] = useState(false);
-  const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
-  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
+  const [isPOIModalOpen, setIsPOIModalOpen] = useState(false);
+  const [selectedPOI, setSelectedPOI] = useState<DailyContent | null>(null);
   const [quizResult, setQuizResult] = useState<'success' | 'failure' | null>(null);
   const [viewer, setViewer] = useState(null);
   const [showProgressPanel, setShowProgressPanel] = useState(false);
   const [visitedScenes, setVisitedScenes] = useState<Set<string>>(new Set(['recepcion']));
-  const [completedHotspots, setCompletedHotspots] = useState<Set<string>>(new Set());
+  const [completedPOIs, setCompletedPOIs] = useState<Set<string>>(new Set());
 
-  const { data: hotspots, isLoading, isError } = useQuery<Hotspot[]>({
-    queryKey: ["hotspots", tourId],
-    queryFn: () => getHotspots(tourId),
+  const { data: dailyPOIs, isLoading, isError } = useQuery<DailyContent[]>({
+    queryKey: ["dailyContent", tourId],
+    queryFn: () => getDailyContent(tourId!),
     enabled: !!tourId,
+  });
+
+  const { data: userProgress } = useQuery({
+    queryKey: ["userProgress", userId],
+    queryFn: () => getUserDailyProgress(userId!),
+    enabled: !!userId,
   });
 
   const { data: userScores } = useQuery({
@@ -80,63 +85,84 @@ const Tour = () => {
           "title": scene.title,
           "type": "equirectangular",
           "panorama": scene.image,
-          "hotSpots": hotspots?.filter(h => h.scene === key).map(h => ({
-            "pitch": h.pitch,
-            "yaw": h.yaw,
-            "type": "info",
-            "text": h.titulo,
-            "clickHandlerFunc": () => handleHotspotClick(h),
-          })) || [],
+          "hotSpots": dailyPOIs?.filter(poi => {
+            const posData = poi.position_data as any;
+            return posData.scene === key;
+          }).map(poi => {
+            const posData = poi.position_data as any;
+            return {
+              "pitch": posData.pitch,
+              "yaw": posData.yaw,
+              "type": "info",
+              "text": poi.title,
+              "clickHandlerFunc": () => handlePOIClick(poi),
+            };
+          }) || [],
         }
       ])
     )
   };
 
   useEffect(() => {
-    if (hotspots && !viewer) {
+    if (dailyPOIs && !viewer) {
       setViewer(window.pannellum.viewer('vr-tour-container', tourConfig as any));
     }
     if (viewer) {
       viewer.loadScene(currentScene);
     }
-  }, [hotspots, currentScene, viewer]);
+  }, [dailyPOIs, currentScene, viewer]);
+
+  useEffect(() => {
+    if (userProgress) {
+      const completedIds = new Set(userProgress.map(p => p.daily_content_id));
+      setCompletedPOIs(completedIds);
+    }
+  }, [userProgress]);
 
   const handleSceneChange = (sceneName: string) => {
     setCurrentScene(sceneName);
     setVisitedScenes(prev => new Set([...prev, sceneName]));
   };
 
-  const handleHotspotClick = (hotspot: Hotspot) => {
-    setSelectedHotspot(hotspot);
-    setIsHotspotModalOpen(true);
-    setQuizAnswer(null);
+  const handlePOIClick = (poi: DailyContent) => {
+    setSelectedPOI(poi);
+    setIsPOIModalOpen(true);
     setQuizResult(null);
   };
 
-  const handleQuizSubmit = async () => {
-    if (!selectedHotspot || !quizAnswer || !userId) return;
+  const handleQuizSubmit = async (answer: string) => {
+    if (!selectedPOI || !userId) return;
 
-    const opciones = selectedHotspot.opciones as HotspotOptions;
-    const correct = opciones?.correcta === quizAnswer;
+    const content = selectedPOI.content as any;
+    const correct = content.correct_answer === answer;
     setQuizResult(correct ? 'success' : 'failure');
 
-    if (correct && selectedHotspot.puntos) {
-      await submitScore(userId, selectedHotspot.id, selectedHotspot.puntos);
-      setCompletedHotspots(prev => new Set([...prev, selectedHotspot.id]));
+    if (correct) {
+      await submitDailyProgress(userId, selectedPOI.id, selectedPOI.points, { 
+        answer, 
+        correct: true 
+      });
+      setCompletedPOIs(prev => new Set([...prev, selectedPOI.id]));
+    } else {
+      await submitDailyProgress(userId, selectedPOI.id, 0, { 
+        answer, 
+        correct: false 
+      });
     }
   };
 
-  const handleCollectPoints = async () => {
-    if (!selectedHotspot || !userId) return;
-    await submitScore(userId, selectedHotspot.id, selectedHotspot.puntos || 0);
-    setCompletedHotspots(prev => new Set([...prev, selectedHotspot.id]));
-    setIsHotspotModalOpen(false);
+  const handleCompleteInteraction = async (interactionData?: any) => {
+    if (!selectedPOI || !userId) return;
+    
+    await submitDailyProgress(userId, selectedPOI.id, selectedPOI.points, interactionData);
+    setCompletedPOIs(prev => new Set([...prev, selectedPOI.id]));
+    setIsPOIModalOpen(false);
   };
 
-  const totalHotspots = hotspots?.length || 0;
+  const totalPOIs = dailyPOIs?.length || 0;
   const totalScenes = Object.keys(scenes).length;
-  const progressPercentage = ((visitedScenes.size / totalScenes) * 50) + ((completedHotspots.size / totalHotspots) * 50);
-  const totalPoints = userScores?.reduce((sum, score) => sum + score.puntos, 0) || 0;
+  const progressPercentage = ((visitedScenes.size / totalScenes) * 50) + ((completedPOIs.size / totalPOIs) * 50);
+  const totalPoints = userProgress?.reduce((sum, progress) => sum + progress.points_earned, 0) || 0;
 
   if (isLoading) {
     return (
@@ -170,9 +196,17 @@ const Tour = () => {
               <ChevronLeft className="h-4 w-4 mr-2" />
               Volver
             </Button>
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" />
-              <span className="font-medium">{scenes[currentScene as keyof typeof scenes]?.title}</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span className="font-medium">{scenes[currentScene as keyof typeof scenes]?.title}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  {new Date().toLocaleDateString('es-ES')}
+                </span>
+              </div>
             </div>
           </div>
           
@@ -203,77 +237,16 @@ const Tour = () => {
       <main className="relative pt-32 h-screen w-full">
         <div id="vr-tour-container" className="absolute inset-0 h-full w-full" />
         
-        {/* Hotspot modal */}
-        <Dialog open={isHotspotModalOpen} onOpenChange={setIsHotspotModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                {selectedHotspot?.tipo === 'info' && <Lightbulb />}
-                {selectedHotspot?.tipo === 'quiz' && <Play />}
-                {selectedHotspot?.tipo === 'coleccionable' && <Eye />}
-                {selectedHotspot?.titulo}
-              </DialogTitle>
-              <DialogDescription>
-                {selectedHotspot?.contenido}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="mt-4">
-              {selectedHotspot?.tipo === 'quiz' && (
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">Pregunta:</h3>
-                  <p>{(selectedHotspot.opciones as HotspotOptions)?.pregunta}</p>
-                  <div className="mt-4 space-y-2">
-                    {(selectedHotspot.opciones as HotspotOptions)?.opciones?.map((opcion) => (
-                      <Button
-                        key={opcion}
-                        variant={quizAnswer === opcion ? (quizResult === 'success' ? 'default' : 'destructive') : 'outline'}
-                        className="w-full justify-start"
-                        onClick={() => setQuizAnswer(opcion)}
-                        disabled={!!quizResult}
-                      >
-                        {opcion}
-                      </Button>
-                    ))}
-                  </div>
-                  <div className="flex justify-between items-center mt-4">
-                    <Button onClick={handleQuizSubmit} disabled={!quizAnswer || !!quizResult}>
-                      Responder
-                    </Button>
-                    {quizResult === 'success' && <CheckCircle className="h-6 w-6 text-green-500" />}
-                    {quizResult === 'failure' && <XCircle className="h-6 w-6 text-red-500" />}
-                  </div>
-                </div>
-              )}
-            </div>
-            {selectedHotspot?.tipo === 'coleccionable' && selectedHotspot.puntos && (
-              <div className="mt-4">
-                <Card>
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Star className="h-5 w-5 text-yellow-400" />
-                      <span className="font-semibold">Puntos: {selectedHotspot.puntos}</span>
-                    </div>
-                    <Button onClick={handleCollectPoints}>
-                      Recolectar
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-            <div className="flex justify-between mt-4">
-              <Button onClick={() => setIsHotspotModalOpen(false)}>Cerrar</Button>
-              {(selectedHotspot?.opciones as HotspotOptions)?.escena_siguiente && (
-                <Button onClick={() => {
-                  const opciones = selectedHotspot.opciones as HotspotOptions;
-                  handleSceneChange(opciones.escena_siguiente!);
-                  setIsHotspotModalOpen(false);
-                }}>
-                  Ir a {(selectedHotspot.opciones as HotspotOptions)?.escena_siguiente}
-                </Button>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Daily POI modal */}
+        <DailyPOIModal
+          isOpen={isPOIModalOpen}
+          onClose={() => setIsPOIModalOpen(false)}
+          poi={selectedPOI}
+          onSubmitAnswer={handleQuizSubmit}
+          onCompleteInteraction={handleCompleteInteraction}
+          isCompleted={selectedPOI ? completedPOIs.has(selectedPOI.id) : false}
+          quizResult={quizResult}
+        />
 
         {/* Panel de progreso lateral */}
         {showProgressPanel && (
@@ -320,10 +293,28 @@ const Tour = () => {
                 </div>
 
                 <div>
-                  <h4 className="font-medium mb-2">Hotspots Completados</h4>
+                  <h4 className="font-medium mb-2">POIs Completados</h4>
                   <span className="text-sm text-muted-foreground">
-                    {completedHotspots.size} de {totalHotspots} interacciones
+                    {completedPOIs.size} de {totalPOIs} POIs diarios
                   </span>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2">Progreso Diario</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span>Preguntas: {dailyPOIs?.filter(p => p.poi_type === 'question' && completedPOIs.has(p.id)).length || 0}/5</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Multimedia: {dailyPOIs?.filter(p => p.poi_type === 'multimedia' && completedPOIs.has(p.id)).length || 0}/3</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Reseña: {dailyPOIs?.filter(p => p.poi_type === 'google_review' && completedPOIs.has(p.id)).length || 0}/1</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Producto: {dailyPOIs?.filter(p => p.poi_type === 'product' && completedPOIs.has(p.id)).length || 0}/1</span>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -359,9 +350,12 @@ const Tour = () => {
                   {scenes[currentScene as keyof typeof scenes]?.description}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <Eye className="h-3 w-3" />
+                  <Star className="h-3 w-3 text-yellow-500" />
                   <span className="text-xs">
-                    {hotspots?.filter(h => h.scene === currentScene).length || 0} puntos de interés
+                    {dailyPOIs?.filter(poi => {
+                      const posData = poi.position_data as any;
+                      return posData.scene === currentScene;
+                    }).length || 0} POIs disponibles
                   </span>
                 </div>
               </div>

@@ -8,6 +8,8 @@ export type Score = Tables<'scores'>;
 export type LeaderboardEntry = Tables<'leaderboard'>;
 export type UserProfile = Tables<'users'>;
 export type Tour = Tables<'tours'>;
+export type DailyContent = Tables<'daily_content'>;
+export type DailyUserProgress = Tables<'daily_user_progress'>;
 
 // Tipos para las opciones de hotspots
 export interface HotspotOptions {
@@ -129,6 +131,83 @@ export const submitScore = async (userId: string, hotspotId: string, puntos: num
     toast({
       title: "¡Puntuación registrada!",
       description: `Has ganado ${puntos} puntos.`,
+      variant: "default",
+    });
+    return { error: null };
+  }
+};
+
+/**
+ * Obtiene el contenido diario de POIs para un tour específico.
+ */
+export const getDailyContent = async (tourId: string, date?: string): Promise<DailyContent[] | null> => {
+  const queryDate = date || new Date().toISOString().split('T')[0];
+  
+  const { data, error } = await supabase
+    .from('daily_content')
+    .select('*')
+    .eq('tour_id', tourId)
+    .eq('date', queryDate)
+    .order('poi_position', { ascending: true });
+
+  if (error) {
+    console.error("Error fetching daily content:", error);
+    toast({
+      title: "Error al cargar contenido diario",
+      description: "No se pudieron obtener los POIs del día.",
+      variant: "destructive",
+    });
+    return null;
+  }
+  return data;
+};
+
+/**
+ * Obtiene el progreso diario del usuario.
+ */
+export const getUserDailyProgress = async (userId: string, date?: string): Promise<DailyUserProgress[] | null> => {
+  const queryDate = date || new Date().toISOString().split('T')[0];
+  
+  const { data, error } = await supabase
+    .from('daily_user_progress')
+    .select('*, daily_content(*)')
+    .eq('user_id', userId)
+    .eq('daily_content.date', queryDate);
+
+  if (error) {
+    console.error("Error fetching user daily progress:", error);
+    return null;
+  }
+  return data;
+};
+
+/**
+ * Registra el progreso del usuario en un POI diario.
+ */
+export const submitDailyProgress = async (
+  userId: string, 
+  dailyContentId: string, 
+  pointsEarned: number,
+  interactionData?: any
+): Promise<{ error: any }> => {
+  const { error } = await supabase.from('daily_user_progress').insert({
+    user_id: userId,
+    daily_content_id: dailyContentId,
+    points_earned: pointsEarned,
+    interaction_data: interactionData,
+  });
+
+  if (error) {
+    toast({
+      title: "Error al registrar progreso",
+      description: error.message,
+      variant: "destructive",
+    });
+    return { error };
+  } else {
+    toast({
+      title: "¡Progreso registrado!",
+      description: `Has ganado ${pointsEarned} puntos.`,
       variant: "default",
     });
     return { error: null };
