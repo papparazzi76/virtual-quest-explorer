@@ -67,6 +67,153 @@ export type Database = {
           },
         ]
       }
+      multimedia: {
+        Row: {
+          descripcion: string | null
+          id: number
+          poi_id: number
+          tipo: Database["public"]["Enums"]["multimedia_tipo"]
+          url: string
+        }
+        Insert: {
+          descripcion?: string | null
+          id?: number
+          poi_id: number
+          tipo: Database["public"]["Enums"]["multimedia_tipo"]
+          url: string
+        }
+        Update: {
+          descripcion?: string | null
+          id?: number
+          poi_id?: number
+          tipo?: Database["public"]["Enums"]["multimedia_tipo"]
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "multimedia_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "pois"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      oficinas: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          id?: never
+          name: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          id?: never
+          name?: string
+        }
+        Relationships: []
+      }
+      pois: {
+        Row: {
+          activo: boolean | null
+          fecha_asignacion: string
+          id: number
+          oficina_id: number
+          posicion: Json | null
+          tipo: Database["public"]["Enums"]["poi_tipo"]
+        }
+        Insert: {
+          activo?: boolean | null
+          fecha_asignacion?: string
+          id?: number
+          oficina_id: number
+          posicion?: Json | null
+          tipo: Database["public"]["Enums"]["poi_tipo"]
+        }
+        Update: {
+          activo?: boolean | null
+          fecha_asignacion?: string
+          id?: number
+          oficina_id?: number
+          posicion?: Json | null
+          tipo?: Database["public"]["Enums"]["poi_tipo"]
+        }
+        Relationships: []
+      }
+      preguntas: {
+        Row: {
+          explicacion: string | null
+          id: number
+          opciones: Json
+          poi_id: number
+          respuesta_correcta: string
+          texto: string
+        }
+        Insert: {
+          explicacion?: string | null
+          id?: number
+          opciones: Json
+          poi_id: number
+          respuesta_correcta: string
+          texto: string
+        }
+        Update: {
+          explicacion?: string | null
+          id?: number
+          opciones?: Json
+          poi_id?: number
+          respuesta_correcta?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preguntas_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "pois"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      productos: {
+        Row: {
+          descripcion: string | null
+          id: number
+          nombre: string
+          poi_id: number
+          puntos_otorgados: number
+        }
+        Insert: {
+          descripcion?: string | null
+          id?: number
+          nombre: string
+          poi_id: number
+          puntos_otorgados?: number
+        }
+        Update: {
+          descripcion?: string | null
+          id?: number
+          nombre?: string
+          poi_id?: number
+          puntos_otorgados?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "productos_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "pois"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scores: {
         Row: {
           created_at: string | null
@@ -117,6 +264,8 @@ export type Database = {
         Row: {
           activo: boolean
           ciudad: string
+          competition_end: string | null
+          competition_start: string | null
           created_at: string
           descripcion: string | null
           id: string
@@ -127,6 +276,8 @@ export type Database = {
         Insert: {
           activo?: boolean
           ciudad: string
+          competition_end?: string | null
+          competition_start?: string | null
           created_at?: string
           descripcion?: string | null
           id?: string
@@ -137,6 +288,8 @@ export type Database = {
         Update: {
           activo?: boolean
           ciudad?: string
+          competition_end?: string | null
+          competition_start?: string | null
           created_at?: string
           descripcion?: string | null
           id?: string
@@ -164,6 +317,72 @@ export type Database = {
         }
         Relationships: []
       }
+      usuario_poi: {
+        Row: {
+          completado: boolean | null
+          fecha: string | null
+          poi_id: number
+          puntos_obtenidos: number | null
+          usuario_id: number
+        }
+        Insert: {
+          completado?: boolean | null
+          fecha?: string | null
+          poi_id: number
+          puntos_obtenidos?: number | null
+          usuario_id: number
+        }
+        Update: {
+          completado?: boolean | null
+          fecha?: string | null
+          poi_id?: number
+          puntos_obtenidos?: number | null
+          usuario_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usuario_poi_poi_id_fkey"
+            columns: ["poi_id"]
+            isOneToOne: false
+            referencedRelation: "pois"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usuario_poi_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usuarios: {
+        Row: {
+          email: string | null
+          id: number
+          nombre: string | null
+          progreso: Json | null
+          puntos_totales: number
+          racha_dias: number
+        }
+        Insert: {
+          email?: string | null
+          id?: number
+          nombre?: string | null
+          progreso?: Json | null
+          puntos_totales?: number
+          racha_dias?: number
+        }
+        Update: {
+          email?: string | null
+          id?: number
+          nombre?: string | null
+          progreso?: Json | null
+          puntos_totales?: number
+          racha_dias?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       leaderboard: {
@@ -180,7 +399,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      multimedia_tipo: "foto" | "video"
+      poi_tipo: "test" | "multimedia" | "reseña" | "producto"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -307,6 +527,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      multimedia_tipo: ["foto", "video"],
+      poi_tipo: ["test", "multimedia", "reseña", "producto"],
+    },
   },
 } as const
