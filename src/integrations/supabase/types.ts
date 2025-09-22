@@ -14,6 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_content: {
+        Row: {
+          content: Json
+          created_at: string | null
+          date: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          poi_position: number
+          poi_type: string
+          points: number | null
+          position_data: Json
+          title: string
+          tour_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          date?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          poi_position: number
+          poi_type: string
+          points?: number | null
+          position_data: Json
+          title: string
+          tour_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          date?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          poi_position?: number
+          poi_type?: string
+          points?: number | null
+          position_data?: Json
+          title?: string
+          tour_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_content_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "tours"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_user_progress: {
+        Row: {
+          completed_at: string | null
+          daily_content_id: string
+          id: string
+          interaction_data: Json | null
+          points_earned: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          daily_content_id: string
+          id?: string
+          interaction_data?: Json | null
+          points_earned?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          daily_content_id?: string
+          id?: string
+          interaction_data?: Json | null
+          points_earned?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_user_progress_daily_content_id_fkey"
+            columns: ["daily_content_id"]
+            isOneToOne: false
+            referencedRelation: "daily_content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_user_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "daily_user_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hotspots: {
         Row: {
           contenido: string | null
